@@ -1,0 +1,4 @@
+FROM ${baseiamge}
+MAINTAINER ${MAINTAINER}
+COPY target/${JARFILE} app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
