@@ -5,16 +5,16 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.niveus.springtemplateengine.util.Utility;
@@ -34,19 +34,30 @@ public class TemplateEngineController {
 	}
 	
 	@GetMapping("/template")
-	public void processTemplate() {
+	public ResponseEntity<String> processTemplate(@RequestParam("appType") String appType) {
 	
 		BufferedReader reader;
 		
 		try {
+			String inputFile = null;
+			String templateFile = null;
 			
-			Resource resourceInput = resourceLoader.getResource("classpath:templates/springbootinput.properties");
+			if("springboot".equalsIgnoreCase(appType)) {
+				inputFile = "classpath:templates/springboot/springbootinput.properties";
+				templateFile = "classpath:templates/springboot/DockerSpringBootTemplate.txt";
+			}
+			else if("nodejs".equalsIgnoreCase(appType)) {
+				inputFile = "classpath:templates/nodejs/nodejsinput.properties";
+				templateFile = "classpath:templates/nodejs/DockerNodeJsTemplate.txt";
+			}
+			
+			Resource resourceInput = resourceLoader.getResource(inputFile);
 			File fileInput = resourceInput.getFile();
 			
 			TreeMap<String, String> map = utility.getProperties(fileInput);
 	        System.out.println(map);
 	           
-			Resource resource = resourceLoader.getResource("classpath:templates/DockerSpringBoot.txt");
+			Resource resource = resourceLoader.getResource(templateFile);
 			File file = resource.getFile();
 
 	
@@ -80,6 +91,9 @@ public class TemplateEngineController {
 		catch(Exception e) {
 			e.printStackTrace();
 		}
+		
+		
+		 return new ResponseEntity<>("Dockerfile created.", HttpStatus.OK);
 		
 	}
 
