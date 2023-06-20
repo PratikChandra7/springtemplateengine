@@ -41,6 +41,8 @@ public class TemplateEngineController {
 		try {
 			String inputFile = null;
 			String templateFile = null;
+			String phpFile = null;
+
 			
 			if("springboot".equalsIgnoreCase(appType)) {
 				inputFile = "classpath:templates/springboot/springbootinput.properties";
@@ -48,9 +50,12 @@ public class TemplateEngineController {
 			}
 			else if("nodejs".equalsIgnoreCase(appType)) {
 				inputFile = "classpath:templates/nodejs/nodejsinput.properties";
-				templateFile = "classpath:templates/nodejs/DockerNodeJsTemplate.txt";
+				templateFile = "classpath:templates/nodejs/DockerNodeJSTemplate.txt";
+			} else if ("php".equalsIgnoreCase(appType)) {
+				inputFile = "classpath:templates/php/phpinput.properties";
+				templateFile = "classpath:templates/php/DockerPHPTemplate.txt";
 			}
-			
+
 			Resource resourceInput = resourceLoader.getResource(inputFile);
 			File fileInput = resourceInput.getFile();
 			
@@ -62,7 +67,7 @@ public class TemplateEngineController {
 
 	
 			String content = new String(Files.readAllBytes(file.toPath()));
-			//System.out.println(" content "+content);
+			// System.out.println(" content "+content);
 			
 		    String result = StringSubstitutor.replace(content, map, "${", "}");
 		    System.out.println("result "+result);
